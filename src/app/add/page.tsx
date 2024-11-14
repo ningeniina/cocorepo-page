@@ -87,51 +87,53 @@ const Home = () => {
                 </div>
               ))}
         </div>
-        <div className="item-list">
+        <div>
           <h3>アイテム追加</h3>
-          <form onSubmit={handleSubmit} className="add-form">
-            <ul>
-              <li>
-                <label>アイテム名</label>
-                <input
-                  type="text"
-                  placeholder="アイテム名"
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
-                />
-              </li>
-              <li>
-                <label>価格</label>
-                <input
-                  type="number"
-                  placeholder="価格"
-                  value={price}
-                  onChange={(e) => setPrice(Number(e.target.value))}
-                />
-              </li>
-              <li>
-                <label>在庫</label>
-                <input
-                  type="number"
-                  placeholder="在庫"
-                  value={stock}
-                  onChange={(e) => setStock(Number(e.target.value))}
-                />
-              </li>
-              <li>
-                <label>カラーコード</label>
-                <input
-                  type="text"
-                  placeholder="#888888"
-                  value={colorCode}
-                  onChange={(e) => setColorCode(e.target.value)}
-                />
-              </li>
-            </ul>
-            <button className="add" type="submit">
-              登録する
-            </button>
-          </form>
+          <div className="item-list">
+            <form onSubmit={handleSubmit} className="add-form">
+              <ul>
+                <li>
+                  <label>アイテム名</label>
+                  <input
+                    type="text"
+                    placeholder="アイテム名"
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
+                  />
+                </li>
+                <li>
+                  <label>価格</label>
+                  <input
+                    type="number"
+                    placeholder="価格"
+                    value={price}
+                    onChange={(e) => setPrice(Number(e.target.value))}
+                  />
+                </li>
+                <li>
+                  <label>在庫</label>
+                  <input
+                    type="number"
+                    placeholder="在庫"
+                    value={stock}
+                    onChange={(e) => setStock(Number(e.target.value))}
+                  />
+                </li>
+                <li>
+                  <label>カラーコード</label>
+                  <input
+                    type="text"
+                    placeholder="#888888"
+                    value={colorCode}
+                    onChange={(e) => setColorCode(e.target.value)}
+                  />
+                </li>
+              </ul>
+              <button className="add" type="submit">
+                登録する
+              </button>
+            </form>
+          </div>
         </div>
       </div>
     </>

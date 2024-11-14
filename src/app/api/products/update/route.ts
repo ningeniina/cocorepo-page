@@ -20,7 +20,26 @@ export async function POST(request: Request) {
   try {
     // 商品の在庫を順番に更新
     for (const { id, stock } of stockChanges) {
-      // 在庫を増減（`stock` は増減値を含んでいる）
+      // 在庫を減らす前に、現在の在庫が減少後0以上であることを確認
+      const currentStockResult = await sql`
+        SELECT stock FROM products WHERE id = ${id};
+      `;
+
+      const currentStock = currentStockResult.rows[0]?.stock;
+
+      if (currentStock === undefined) {
+        throw new Error(`Product with id ${id} not found`);
+      }
+
+      const newStock = currentStock - stock;
+
+      if (newStock < 0) {
+        throw new Error(
+          `Cannot update stock for product ${id} as it would go below zero`
+        );
+      }
+
+      // 在庫が0以上であれば更新
       const result = await sql`
         UPDATE products
         SET stock = stock - ${stock}
@@ -28,13 +47,7 @@ export async function POST(request: Request) {
         RETURNING id, stock;
       `;
 
-      // 型アサーションで、result.rows[0] の型を明示的に指定
       const updatedProduct: Product = result.rows[0] as Product;
-
-      // 結果が空であればエラーをスロー
-      if (!updatedProduct) {
-        throw new Error(`Product with id ${id} not found`);
-      }
 
       // 更新した商品を追跡
       updatedProducts.push(updatedProduct);
@@ -45,6 +58,16 @@ export async function POST(request: Request) {
     return NextResponse.json({ products: products.rows }, { status: 200 });
   } catch (error) {
     console.error(error);
+
+    // エラーハンドリング: errorがErrorインスタンスかどうかを確認
+    if (error instanceof Error) {
+      return NextResponse.json(
+        { error: error.message }, // error.messageを返す
+        { status: 500 }
+      );
+    }
+
+    // 'unknown' 型に対しては、デフォルトメッセージを返す
     return NextResponse.json(
       { error: "在庫更新に失敗しました" },
       { status: 500 }

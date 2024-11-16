@@ -8,18 +8,19 @@ interface Product {
   price: number;
   stock: number;
   color_code: string;
+  initial_price: number;
 }
 
 const Home = () => {
   const [name, setName] = useState("");
   const [price, setPrice] = useState(0);
+  const [initialPrice, setInitialPrice] = useState(0); // 初期価格ステート
   const [stock, setStock] = useState(0);
   const [colorCode, setColorCode] = useState("#888888");
 
   const [products, setProducts] = useState<Product[]>([]);
 
   useEffect(() => {
-    // 初期のデータを取得する
     const fetchProducts = async () => {
       const response = await fetch("/api/products");
       const data = await response.json();
@@ -36,7 +37,7 @@ const Home = () => {
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ name, price, stock, colorCode }),
+      body: JSON.stringify({ name, price, stock, colorCode, initialPrice }),
     });
     const data = await response.json();
     if (data.error) {
@@ -48,9 +49,8 @@ const Home = () => {
   };
 
   const handleDelete = async (id: number) => {
-    // 削除前に確認アラートを表示
     const isConfirmed = window.confirm("本当にこのアイテムを削除しますか？");
-    if (!isConfirmed) return; // キャンセルした場合は処理を中断
+    if (!isConfirmed) return;
 
     const response = await fetch(`/api/delete?id=${id}`, {
       method: "DELETE",
@@ -60,7 +60,7 @@ const Home = () => {
       alert(data.error);
     } else {
       alert("アイテムが削除されました");
-      setProducts(products.filter((product) => product.id !== id)); // 削除した商品を表示リストから削除
+      setProducts(products.filter((product) => product.id !== id));
     }
   };
 
@@ -75,14 +75,17 @@ const Home = () => {
             : products.map((product, i) => (
                 <div className="item-list" key={i}>
                   <h3>{product.name}</h3>
-                  <p>
-                    カラーコード:
-                    {product.color_code
-                      ? product.color_code
-                      : "カラーコードは設定されていません"}
-                  </p>
+                  <p>カラーコード: {product.color_code || "設定なし"}</p>
                   <p>価格: ¥{product.price}</p>
+                  <p>初期在庫: {product.initial_price}</p>
                   <p>現在の在庫: {product.stock}</p>
+                  <p>
+                    個別売上: ¥
+                    {(
+                      (product.initial_price - product.stock) *
+                      product.price
+                    ).toLocaleString()}
+                  </p>
                   <button onClick={() => handleDelete(product.id)}>削除</button>
                 </div>
               ))}
@@ -106,8 +109,19 @@ const Home = () => {
                   <input
                     type="number"
                     placeholder="価格"
-                    value={price}
+                    min="0"
+                    value={price !== 0 ? price : ""}
                     onChange={(e) => setPrice(Number(e.target.value))}
+                  />
+                </li>
+                <li>
+                  <label>初期在庫</label>
+                  <input
+                    type="number"
+                    placeholder="初期在庫"
+                    min="0"
+                    value={initialPrice !== 0 ? initialPrice : ""}
+                    onChange={(e) => setInitialPrice(Number(e.target.value))}
                   />
                 </li>
                 <li>
@@ -115,7 +129,8 @@ const Home = () => {
                   <input
                     type="number"
                     placeholder="在庫"
-                    value={stock}
+                    value={stock !== 0 ? stock : ""}
+                    min="0"
                     onChange={(e) => setStock(Number(e.target.value))}
                   />
                 </li>

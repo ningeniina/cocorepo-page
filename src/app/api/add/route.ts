@@ -2,17 +2,18 @@ import { sql } from "@vercel/postgres";
 import { NextResponse } from "next/server";
 
 export async function POST(request: Request) {
-  const { name, price, stock, colorCode } = await request.json();
+  const { name, price, stock, colorCode, initialPrice } = await request.json();
 
   try {
-    if (!name || !price || !stock) {
-      throw new Error("Name, price, and stock are required");
+    // 必須フィールドのバリデーション
+    if (!name || !price || !stock || !initialPrice) {
+      throw new Error("Name, price, stock, and initialPrice are required");
     }
 
     // products テーブルに新しい商品を追加
     await sql`
-      INSERT INTO products (name, price, stock, color_code) 
-      VALUES (${name}, ${price}, ${stock}, ${colorCode});
+      INSERT INTO products (name, price, stock, color_code, initial_price) 
+      VALUES (${name}, ${price}, ${stock}, ${colorCode}, ${initialPrice});
     `;
     return NextResponse.json(
       { message: "Product added successfully" },

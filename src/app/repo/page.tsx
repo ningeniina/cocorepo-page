@@ -105,7 +105,7 @@ const Home = () => {
   return (
     <>
       <Header page="レジ" />
-      <div className="wrapper">
+      <div className="wrapper fixed-true">
         <form onSubmit={handleSubmit} className="add-form">
           {products.length === 0
             ? "登録アイテムがありません"
@@ -157,12 +157,14 @@ const Home = () => {
                   </div>
                 </div>
               ))}
-          <div className="sum">
-            合計金額: <span>¥ {calculateTotal()}</span>
+          <div className="submit">
+            <div className="sum">
+              合計金額: <span>¥ {calculateTotal()}</span>
+            </div>
+            <button className="enter" type="submit">
+              決定
+            </button>
           </div>
-          <button className="enter" type="submit">
-            決定
-          </button>
         </form>
       </div>
     </>

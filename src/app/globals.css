@@ -10,6 +10,7 @@ body {
 }
 
 body {
+  position: relative;
   font-family: "Zen Maru Gothic", sans-serif;
   font-weight: 700;
   font-size: 16px;
@@ -59,6 +60,11 @@ button {
   width: 100%;
   margin: auto;
   padding: 16px;
+  padding-bottom: 80px;
+}
+
+.wrapper.fixed-true {
+  padding-bottom: 200px;
 }
 
 .top {
@@ -244,11 +250,25 @@ input[type="number"]::-webkit-inner-spin-button {
 .sum {
   text-align: center;
   font-size: 18px;
-  margin: 40px auto;
+  padding: 40px auto;
 }
 
 .sum span {
   font-size: 24px;
+}
+
+.submit {
+  position: fixed;
+  width: 100%;
+  bottom: 0;
+  left: 0;
+  padding: 14px 16px 32px;
+  background: white;
+  box-shadow: 0 0 16px #00000011;
+}
+
+.submit button.enter {
+  margin-top: 16px;
 }
 
 @media screen and (max-width: 768px) {
